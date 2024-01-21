@@ -2,11 +2,6 @@ import axios from "axios";
 
 const instance = axios.create({
     baseURL: "https://pixabay.com/api",
-    // params: {
-    //     key: "",
-    //     image_type: "photo",
-    //     orientation: "horizontal"
-    // }
 })
 
 export const getAllImages = ()=> {
