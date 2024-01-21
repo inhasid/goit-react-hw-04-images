@@ -34,7 +34,7 @@
     width: 48px;
     height: 48px;
     border: 0;
-    background-image: url('/public/magnifying-glass.svg');
+    /*background-image: url('/public/magnifying-glass.svg');*/
     background-size: 140%;
     background-repeat: no-repeat;
     background-position: center;
