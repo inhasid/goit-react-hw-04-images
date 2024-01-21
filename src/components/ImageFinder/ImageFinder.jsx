@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import { searchImages } from "../../api/images"
 import ImageGallery from "components/ImageGallery/ImageGallery";
 import Searchbar from "components/Searchbar/Searchbar";
@@ -6,82 +6,62 @@ import Button from "components/Button/Button";
 import Modal from "components/Modal/Modal";
 import Loader from "components/Loader/Loader";
 
-import styles from "./image-finder.module.css"
+import styles from "./image-finder.module.css";
 
-class ImageFinder extends Component {
-    state = {
-        search: "",
-        images: [],
-        loading: false,
-        error: null,
-        page: 1,
-        modalOpen: false,
-        largeImage: "",
-    }
+const ImageFinder = () => {
+    const [search, setSearch] = useState("");
+    const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [largeImage, setLargeImage] = useState({});
 
-    async componentDidUpdate(_, prevState) {
-        const { search, page } = this.state;
-        if (search && (search !== prevState.search || page !== prevState.page)) {
-            this.fetchImages();
+    useEffect(() => {
+        const fetchImages = async() => {
+            try {
+                setLoading(true);
+                const respImage = await searchImages(search, page);
+                const { hits } = respImage.data;
+                setImages(prevImages => hits?.length ? [...prevImages, ...hits] : prevImages)
+            }
+
+            catch (error) {
+                setError(error.message);
+            }
+
+            finally {
+                setLoading(false);
+            }
         }
-    }
 
-    async fetchImages() {
-        const { search, page } = this.state;
-        try {
-            this.setState({
-                loading: true,
-            });
-            const respImage = await searchImages(search, page);
-            const { hits } = respImage.data;
-            this.setState(({ images }) => ({
-                images: hits?.length ? [...images, ...hits] : images,
-            }))
+        if(search) {
+            fetchImages();
         }
-        catch (error) {
-            this.setState({
-                error: error.message
-            })
-        }
-        finally {
-            this.setState({
-                loading: false,
-            })
-        }
+    }, [search, page])
+
+    const handleSearch = ({ search }) => {
+        setSearch(search);
+        setImages([]);
+        setPage(1);
     }
 
-    handleSearch = ({ search }) => {
-        this.setState({
-            search,
-            images: [],
-            page: 1,
-        })
-    }
+    const loadMore = () => setPage(prevPage => prevPage + 1);
 
-    loadMore = () => {
-        this.setState(({ page }) => ({ page: page + 1 }));
-    }
-
-    showModal = ({largeImageURL}) => {
-        this.setState({
-            modalOpen: true,
+    const showModal = ({ largeImageURL }) => {
+        setModalOpen(true);
+        setLargeImage({
             largeImage: largeImageURL,
         })
     }
 
-    closeModal = ()=> {
-        this.setState({
-            modalOpen: false,
-            largeImage: "",
-        })
+    const closeModal = () => {
+        setModalOpen(false);
+        setLargeImage({});
     }
 
-
-    render() {
-        const { handleSearch, loadMore, showModal, closeModal } = this;
-        const { images, loading, error, modalOpen, largeImage } = this.state;
-        const isImages = Boolean(images.length);
-        const isMoreImages = Boolean(images.length % 12 === 0);
+    const isImages = Boolean(images.length);
+    const isMoreImages = Boolean(images.length % 12 === 0);
 
         return (
             <>
@@ -95,7 +75,7 @@ class ImageFinder extends Component {
             
             </>
         )
-    }
+
 }
 
 export default ImageFinder;
