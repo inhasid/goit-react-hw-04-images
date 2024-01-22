@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { searchImages } from "../../api/images"
+import { searchImages } from "../../api/images";
 import ImageGallery from "components/ImageGallery/ImageGallery";
 import Searchbar from "components/Searchbar/Searchbar";
 import Button from "components/Button/Button";
@@ -50,9 +50,7 @@ const ImageFinder = () => {
 
     const showModal = ({ largeImageURL }) => {
         setModalOpen(true);
-        setLargeImage({
-            largeImage: largeImageURL,
-        })
+        setLargeImage(largeImageURL);
     }
 
     const closeModal = () => {
