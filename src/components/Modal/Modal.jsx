@@ -12,11 +12,11 @@ const Modal = ({ close, children }) => {
         }
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         document.addEventListener("keydown", closeModal);
 
-        return ()=> document.removeEventListener("keydown", closeModal);
-    }, [closeModal])
+        return () => document.removeEventListener("keydown", closeModal);
+    });
 
     return createPortal(
             (<div className={styles.overlay} onClick={closeModal}>
